@@ -1,54 +1,14 @@
-cp Makefile ../../or1200_1/sw/selftest/
-cp Makefile ../../or1200_2/sw/selftest/
-cp Makefile ../../or1200_3/sw/selftest/
-cp Makefile ../../or1200_4/sw/selftest/
-cp Makefile ../../or1200_5/sw/selftest/
-cp Makefile ../../or1200_6/sw/selftest/
-cp Makefile ../../or1200_7/sw/selftest/
-cp Makefile ../../or1200_8/sw/selftest/
-cp Makefile ../../or1200_9/sw/selftest/
-cp Makefile ../../or1200_10/sw/selftest/
-cp Makefile ../../or1200_11/sw/selftest/
-cp Makefile ../../or1200_12/sw/selftest/
-cp Makefile ../../or1200_13/sw/selftest/
-cp Makefile ../../or1200_14/sw/selftest/
-cp Makefile ../../or1200_15/sw/selftest/
-cp Makefile ../../or1200_16/sw/selftest/
-cp main.c ../../or1200_1/sw/selftest/
-cp main.c ../../or1200_2/sw/selftest/
-cp main.c ../../or1200_3/sw/selftest/
-cp main.c ../../or1200_4/sw/selftest/
-cp main.c ../../or1200_5/sw/selftest/
-cp main.c ../../or1200_6/sw/selftest/
-cp main.c ../../or1200_7/sw/selftest/
-cp main.c ../../or1200_8/sw/selftest/
-cp main.c ../../or1200_9/sw/selftest/
-cp main.c ../../or1200_10/sw/selftest/
-cp main.c ../../or1200_11/sw/selftest/
-cp main.c ../../or1200_12/sw/selftest/
-cp main.c ../../or1200_13/sw/selftest/
-cp main.c ../../or1200_14/sw/selftest/
-cp main.c ../../or1200_15/sw/selftest/
-cp main.c ../../or1200_16/sw/selftest/
-cp susanO2_HT.S ../../or1200_1/sw/selftest/
-cp susanO2_HT.S ../../or1200_2/sw/selftest/
-cp susanO2_HT.S ../../or1200_3/sw/selftest/
-cp susanO2_HT.S ../../or1200_4/sw/selftest/
-cp susanO2_HT.S ../../or1200_5/sw/selftest/
-cp susanO2_HT.S ../../or1200_6/sw/selftest/
-cp susanO2_HT.S ../../or1200_7/sw/selftest/
-cp susanO2_HT.S ../../or1200_8/sw/selftest/
-cp susanO2_HT.S ../../or1200_9/sw/selftest/
-cp susanO2_HT.S ../../or1200_10/sw/selftest/
-cp susanO2_HT.S ../../or1200_11/sw/selftest/
-cp susanO2_HT.S ../../or1200_12/sw/selftest/
-cp susanO2_HT.S ../../or1200_13/sw/selftest/
-cp susanO2_HT.S ../../or1200_14/sw/selftest/
-cp susanO2_HT.S ../../or1200_15/sw/selftest/
-cp susanO2_HT.S ../../or1200_16/sw/selftest/
+ROOTDIR="../.."
+PROGRAM_NAME="susan"
+for i in `seq 1 16`; do
+	cp Makefile ${ROOTDIR}/or1200_${i}/sw/selftest/
+	cp main.c ${ROOTDIR}/or1200_${i}/sw/selftest/
+#	cp ${PROGRAM_NAME}O2_HT.h ${ROOTDIR}/or1200_${i}/sw/selftest/
+	cp ${PROGRAM_NAME}O2_HT.S ${ROOTDIR}/or1200_${i}/sw/selftest/
+done  
 
-cp constraints.xml ../../ugp/ 
-cp eval_script.sh ../../ugp/ 
-cp script_ugp.sh ../../ugp/
-cp susanO2_HT.S ../../ugp/sources/
-cp susanO2_HTbyte ../../ugp/sources/ 
+cp constraints.xml ${ROOTDIR}/ugp/ 
+cp eval_script.sh ${ROOTDIR}/ugp/ 
+cp script_ugp.sh ${ROOTDIR}/ugp/
+cp ${PROGRAM_NAME}O2_HT.S ${ROOTDIR}/ugp/sources/
+cp ${PROGRAM_NAME}O2_HTbyte ${ROOTDIR}/ugp/sources/ 

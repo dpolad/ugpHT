@@ -1,3 +1,5 @@
+ROOTDIR="../../"
+
 cp Makefile ../../or1200_1/sw/selftest/
 cp Makefile ../../or1200_2/sw/selftest/
 cp Makefile ../../or1200_3/sw/selftest/

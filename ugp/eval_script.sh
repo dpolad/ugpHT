@@ -6,55 +6,59 @@
 indiv=$1
 i=$2
 
-TEST_PROGRAM_NAME='blowfish'
-TEST_PROGRAM_MAIN='_Blowfish_Test'
+TEST_PROGRAM_NAME='susan'
+TEST_PROGRAM_MAIN='susan_cornes_quick'
 
 OR_DIR=../or1200_$i
 SOURCEFILE=sources/${TEST_PROGRAM_NAME}O2_HT.S
 SOURCEFILE_BYTES=sources/${TEST_PROGRAM_NAME}O2_HTbyte
 
-SIMULATION_ENABLED=true;
-MAXSEQ_ENABLED=true;
-DAMLEV_ENABLED=true;
-JACCARD_ENABLED=true;
-COUNTLINES_ENABLED=true;
-CHECKRESULT_ENABLED=true;
-DIFFERENCE_ENABLED=true;
+SIMULATION_ENABLED=true
+MAXSEQ_ENABLED=true
+DAMLEV_ENABLED=true
+JACCARD_ENABLED=true
+COUNTLINES_ENABLED=true
+CHECKRESULT_ENABLED=false
+DIFFERENCE_ENABLED=false		#keep this disabled, not working
+
+VERBOSE=true
 
 #create the new code by transforming the source file and put it into tmp.S
-./script_ugp.sh $SOURCEFILE $indiv > tmp$i.S
+./script_ugp.sh $SOURCEFILE $indiv > temp/tmp$i.S
 
 
 #move the code in the corresponding folder
-cp tmp$i.S $OR_DIR/sw/selftest/${TEST_PROGRAM_NAME}O2_HT.S
+cp temp/tmp$i.S $OR_DIR/sw/selftest/${TEST_PROGRAM_NAME}O2_HT.S
 
 #compile the individual, if any error is given, skip and print fitness 0
-$OR_DIR/compile_selftest.sh 2>log$i.log 1>log$i.log
-if [[ $(grep "Error" log$i.log | wc -c) -eq 0 ]]; then
+$OR_DIR/compile_selftest.sh 2>temp/log$i.log 1>temp/log$i.log
+if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
+
+	awkcommand='/<_'"$TEST_PROGRAM_MAIN"'>:/ {p=1}; p; /^$/ {p=0}'	
+	awk "$awkcommand" $OR_DIR/sw/selftest/selftest-nocache.lst | tail -n +2 | head -n -1 | cut -f2 | sed 's/ //g' | tr '\n' ' ' > temp/byte$i
 	
-	awk -v main=$TEST_PROGRAM_MAIN '/<$main>:/ {p=1}; p; /^$/ {p=0}' $OR_DIR/sw/selftest/selftest-nocache.lst | tail -n +2 | head -n -1 | cut -f2 | sed 's/ //g' | tr '\n' ' ' > byte$i
 	if $DAMLEV_ENABLED; then
-		damlevdist=$(python damlevdist.py $SOURCEFILE_BYTES byte$i)
+		damlevdist=$(python damlevdist.py $SOURCEFILE_BYTES temp/byte$i)
 	fi
 
 	if $MAXSEQ_ENABLED; then
-		maxseq=$(python maxseq.py $SOURCEFILE_BYTES byte$i | tr ' ' '\n' | wc -l)
-		((maxseq = 1000 - $maxseq ))
+		maxseq=$(python maxseq.py $SOURCEFILE_BYTES temp/byte$i | tr ' ' '\n' | wc -l)
+		(( maxseq = 1000 - $maxseq ))
 	fi
 
 	if $JACCARD_ENABLED; then
 		#get jaccardindex and save it to jindex variable
-		python3 jaccardIndex.py $SOURCEFILE tmp$i.S $i
+		python3 jaccardIndex.py $SOURCEFILE_BYTES temp/byte$i $i
 		jindex=`cat index$i.txt`
 		rm index$i.txt
 	fi
 	
 	if $SIMULATION_ENABLED; then
 		#run the simulation
-		$OR_DIR/sim_nogui.sh > sim$i.log
+		$OR_DIR/sim_nogui.sh > temp/sim$i.log
 
 		#save in the triggers variable the number of triggers, then invert the value and put it into invtriggers
-		triggers=$(cat sim$i.log | grep -c "TRIGGERED")
+		triggers=$(cat temp/sim$i.log | grep -c "TRIGGERED")
 		(( invtriggers = 1000 - $triggers ))
 
 		trg=0
@@ -66,7 +70,7 @@ if [[ $(grep "Error" log$i.log | wc -c) -eq 0 ]]; then
 
 	if $COUNTLINES_ENABLED; then
 		#number of lines of the code is retrived from the current file, inverted and saved into variable clines
-		clines=$((10000-`wc -l tmp$i.S | cut -f1 -d" "`))
+		clines=$((10000-`wc -l temp/tmp$i.S | cut -f1 -d" "`))
 	fi
 
 	if $CHECKRESULT_ENABLED; then
@@ -81,15 +85,23 @@ if [[ $(grep "Error" log$i.log | wc -c) -eq 0 ]]; then
 	fi
 
 	if $DIFFERENCE_ENABLED; then
-		dif=$(./difference.sh tmp$i.S $i)
+		dif=$(./difference.sh temp/tmp$i.S $i)
 		((dif = 1000-$dif))
 	fi
 
+	if $VERBOSE; then
+		echo -e "LINES:\t$clines"
+		echo -e "TRIGS:\t$triggers"
+		echo -e "JINDEX:\t$jindex"
+		echo -e "DAMLEV:\t$damlevdist"
+		echo -e "MAXSEQ:\t$maxseq"
+	fi
+
 	# cleanup
-	rm byte$i
+#	rm temp/byte$i
 #	rm sim$i.log
-	rm log$i.log
-	rm tmp$i.S
+	rm temp/log$i.log
+	rm temp/tmp$i.S
 	
 	echo "$jindex $maxseq $trg" > fit$i.out
 	echo "$1 $jindex $maxseq $trg" >> FIT/mystat

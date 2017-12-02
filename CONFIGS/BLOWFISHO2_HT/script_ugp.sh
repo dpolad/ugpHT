@@ -1,5 +1,7 @@
+#!/bin/bash
 
 filename=$1
+
 function contains() {
     local n=$#
     local value=${!n}
@@ -13,7 +15,9 @@ function contains() {
     return 1
 } 
 
-i=$(awk '/_Blowfish_Test:/ {print FNR}' $filename)
+TEST_PROGRAM_MAIN='Blowfish_Test'
+awkcommand='/_'"${TEST_PROGRAM_MAIN}"':/ {print FNR}'
+i=$(awk "$awkcommand") 
 awk -v s=$i 'FNR <= s' $filename
 
 swap=0

@@ -1,68 +1,110 @@
 #!/bin/bash
-#$1 -> individual to evaluate
+
+#$1 -> name of the individual to evaluate
 #$2 -> number of the evaluation
 
-###### NOTE: AT THE MOMENT SIMULATION IS NOT ENABLED SIMPLY PRINTS 1 AT THE END ########
 indiv=$1
 i=$2
+
+TEST_PROGRAM_NAME='qs'
+TEST_PROGRAM_MAIN='quick'
+
 OR_DIR=../or1200_$i
-SOURCEFILE=sources/qsO2_HT.S
-SOURCEFILE_BYTES=sources/qsO2_HTbyte
+SOURCEFILE=sources/${TEST_PROGRAM_NAME}O2_HT.S
+SOURCEFILE_BYTES=sources/${TEST_PROGRAM_NAME}O2_HTbyte
+
+SIMULATION_ENABLED=true
+MAXSEQ_ENABLED=true
+DAMLEV_ENABLED=true
+JACCARD_ENABLED=true
+COUNTLINES_ENABLED=true
+CHECKRESULT_ENABLED=false
+DIFFERENCE_ENABLED=false		#keep this disabled, not working
+
+VERBOSE=true
 
 #create the new code by transforming the source file and put it into tmp.S
-./script_ugp.sh $SOURCEFILE $indiv > tmp$i.S
+./script_ugp.sh $SOURCEFILE $indiv > temp/tmp$i.S
 
 
 #move the code in the corresponding folder
-cp tmp$i.S $OR_DIR/sw/selftest/qsO2_HT.S
+cp temp/tmp$i.S $OR_DIR/sw/selftest/${TEST_PROGRAM_NAME}O2_HT.S
 
 #compile the individual, if any error is given, skip and print fitness 0
-$OR_DIR/compile_selftest.sh 2>log$i.log 1>log$i.log
-if [[ $(grep "Error" log$i.log | wc -c) -eq 0 ]]; then
+$OR_DIR/compile_selftest.sh 2>temp/log$i.log 1>temp/log$i.log
+if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
+
+	awkcommand='/<_'"$TEST_PROGRAM_MAIN"'>:/ {p=1}; p; /^$/ {p=0}'	
+	awk "$awkcommand" $OR_DIR/sw/selftest/selftest-nocache.lst | tail -n +2 | head -n -1 | cut -f2 | sed 's/ //g' | tr '\n' ' ' > temp/byte$i
 	
-	awk '/<_quick>:/ {p=1}; p; /^$/ {p=0}' $OR_DIR/sw/selftest/selftest-nocache.lst | tail -n +2 | head -n -1 | cut -f2 | sed 's/ //g' | tr '\n' ' ' > byte$i
-#	damlevdist=$(python damlevdist.py $SOURCEFILE_BYTES byte$i)
-	maxseq=$(python maxseq.py $SOURCEFILE_BYTES byte$i | tr ' ' '\n' | wc -l)
-	((maxseq = 1000 - $maxseq ))
-
-
-	#get jaccardindex and save it to jindex variable
-#	python3 jaccardIndex.py $SOURCEFILE_BYTES byte$i $i
-#	jindex=`cat index$i.txt`
-#	rm index$i.txt
-	rm byte$i
-
-
-	#run the simulation
-	$OR_DIR/sim_nogui.sh > sim$i.log
-
-	#save in the triggers variable the number of triggers, then invert the value and put it into invtriggers
-	triggers=$(cat sim$i.log | grep -c "TRIGGERED")
-	trg=0
-	if (( triggers != 0 ));
-	then
-		trg=1
+	if $DAMLEV_ENABLED; then
+		damlevdist=$(python damlevdist.py $SOURCEFILE_BYTES temp/byte$i)
 	fi
-#	(( invtriggers = 1000 - $triggers ))
 
-	#number of lines of the code is retrived from the current file, inverted and saved into variable clines
-	clines=$((10000-`wc -l tmp$i.S | cut -f1 -d" "`))
+	if $MAXSEQ_ENABLED; then
+		maxseq=$(python maxseq.py $SOURCEFILE_BYTES temp/byte$i | tr ' ' '\n' | wc -l)
+		(( maxseq = 1000 - $maxseq ))
+	fi
 
-	#check if the general.log (output) is correct and save it to correct variable
-#	if [[ $(cat $OR_DIR/sim/run/general.log | cut -f4,5 -d" " | cmp --silent sources/golden.log | wc -c ) -eq 0 ]]; then
-#		correct=1
-#	else
-#		correct=0
-#	fi
+	if $JACCARD_ENABLED; then
+		#get jaccardindex and save it to jindex variable
+		python3 jaccardIndex.py $SOURCEFILE_BYTES temp/byte$i $i
+		jindex=`cat index$i.txt`
+		rm index$i.txt
+	fi
+	
+	if $SIMULATION_ENABLED; then
+		#run the simulation
+		$OR_DIR/sim_nogui.sh > temp/sim$i.log
 
-	#dif=$(./difference.sh tmp$i.S $i)
-	#((dif = 1000-$dif))
+		#save in the triggers variable the number of triggers, then invert the value and put it into invtriggers
+		triggers=$(cat temp/sim$i.log | grep -c "TRIGGERED")
+		(( invtriggers = 1000 - $triggers ))
+
+		trg=0
+		# trg is 1 if trojan triggered at least once else 0
+		if (( triggers != 0 )); then
+			trg=1
+		fi
+	fi
+
+	if $COUNTLINES_ENABLED; then
+		#number of lines of the code is retrived from the current file, inverted and saved into variable clines
+		clines=$((10000-`wc -l temp/tmp$i.S | cut -f1 -d" "`))
+	fi
+
+	if $CHECKRESULT_ENABLED; then
+		#check if the general.log (output) is correct and save it to correct variable
+		if [[ $(cat $OR_DIR/sim/run/general.log | cut -f4,5 -d" " | cmp --silent sources/golden.log | wc -c ) -eq 0 ]]; then
+			correct=1
+		else
+			correct=0
+		fi
+	else
+		correct=1
+	fi
+
+	if $DIFFERENCE_ENABLED; then
+		dif=$(./difference.sh temp/tmp$i.S $i)
+		((dif = 1000-$dif))
+	fi
+
+	if $VERBOSE; then
+		echo -e "LINES:\t$clines"
+		echo -e "TRIGS:\t$triggers"
+		echo -e "JINDEX:\t$jindex"
+		echo -e "DAMLEV:\t$damlevdist"
+		echo -e "MAXSEQ:\t$maxseq"
+	fi
+
+	# cleanup
+#	rm temp/byte$i
 #	rm sim$i.log
-	rm log$i.log
-	rm tmp$i.S
-	correct=1
-	echo "$maxseq $clines $trg" > fit$i.out
-	echo "$1 $maxseq $clines $trg" >> FIT/mystat$i
+	rm temp/log$i.log
+	rm temp/tmp$i.S
+	
+	echo "$jindex $maxseq $trg" > fit$i.out
+	echo "$1 $jindex $maxseq $trg" >> FIT/mystat
 else
 	echo " 0 0 0 0" > fit$i.out
 fi
