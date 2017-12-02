@@ -1,0 +1,5 @@
+GEN,CPU,pop1_Generation,pop1_E,pop1_Mu,pop1_Lambda,pop1_Tau,pop1_Sigma,pop1_EvalCount,pop1_DuplicateCount,pop1_CacheCount,pop1_OpUse_replacementMutation,pop1_MAB_replacementMutation,pop1_AvgAge,pop1_AvgIndSize,pop1_Avg_f0,pop1_Best_f0,pop1_Worst_f0
+0,0,0,7.30899,36,24,2,0.99,36,0,0,0,0,0,98,992.389,995,987
+1,33,1,7.26329,36,24,1.9,0.99,60,0,0,24,0.781637,1,98,993.694,995,992
+2,48,2,7.25083,36,24,1.81,0.99,84,0,0,24,0.751492,1.66667,98,994.306,996,993
+3,62,3,7.24469,36,24,1.729,0.99,108,0,0,24,0.700521,2.5,98,994.417,996,994
