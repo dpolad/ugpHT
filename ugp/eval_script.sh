@@ -31,7 +31,7 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 	fi
 
 	if $MAXSEQ_ENABLED; then
-		maxseq=$(python maxseq.py $SOURCEFILE_BYTES temp/byte$i | tr ' ' '\n' | wc -l)
+		maxseq=$(python maxseq.py $SOURCEFILE_BYTES temp/byte$i | wc -l)
 		(( maxseq = 1000 - $maxseq ))
 	fi
 

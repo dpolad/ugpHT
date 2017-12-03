@@ -19,5 +19,5 @@ for x in s1:
         if i+len(s) == len(FIRST):
             break
         s = FIRST[i:i+len(s)+9]
-    i += 9 
-print longest
+    i += 9
+print longest.strip(' ').replace(' ', '\n') 
