@@ -1,0 +1,5 @@
+TODO:
+- code refactor for ugp_script.sh (maybe python)
+- merge all loading scripts and eval script into a single one using environment variables
+- fix scripts to print statistics
+- add other test programs

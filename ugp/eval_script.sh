@@ -6,20 +6,10 @@
 indiv=$1
 i=$2
 
-TEST_PROGRAM_NAME='susan'
-TEST_PROGRAM_MAIN='susan_cornes_quick'
 
 OR_DIR=../or1200_$i
 SOURCEFILE=sources/${TEST_PROGRAM_NAME}O2_HT.S
 SOURCEFILE_BYTES=sources/${TEST_PROGRAM_NAME}O2_HTbyte
-
-SIMULATION_ENABLED=true
-MAXSEQ_ENABLED=true
-DAMLEV_ENABLED=true
-JACCARD_ENABLED=true
-COUNTLINES_ENABLED=true
-CHECKRESULT_ENABLED=false
-DIFFERENCE_ENABLED=false		#keep this disabled, not working
 
 VERBOSE=true
 
@@ -38,7 +28,7 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 	awk "$awkcommand" $OR_DIR/sw/selftest/selftest-nocache.lst | tail -n +2 | head -n -1 | cut -f2 | sed 's/ //g' | tr '\n' ' ' > temp/byte$i
 	
 	if $DAMLEV_ENABLED; then
-		damlevdist=$(python damlevdist.py $SOURCEFILE_BYTES temp/byte$i)
+		damlev=$(python damlevdist.py $SOURCEFILE_BYTES temp/byte$i)
 	fi
 
 	if $MAXSEQ_ENABLED; then
@@ -49,7 +39,7 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 	if $JACCARD_ENABLED; then
 		#get jaccardindex and save it to jindex variable
 		python3 jaccardIndex.py $SOURCEFILE_BYTES temp/byte$i $i
-		jindex=`cat index$i.txt`
+		jaccard=`cat index$i.txt`
 		rm index$i.txt
 	fi
 	
@@ -70,7 +60,7 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 
 	if $COUNTLINES_ENABLED; then
 		#number of lines of the code is retrived from the current file, inverted and saved into variable clines
-		clines=$((10000-`wc -l temp/tmp$i.S | cut -f1 -d" "`))
+		linecount=$((10000-`wc -l temp/tmp$i.S | cut -f1 -d" "`))
 	fi
 
 	if $CHECKRESULT_ENABLED; then
@@ -90,10 +80,10 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 	fi
 
 	if $VERBOSE; then
-		echo -e "LINES:\t$clines"
+		echo -e "LINES:\t$linecount"
 		echo -e "TRIGS:\t$triggers"
-		echo -e "JINDEX:\t$jindex"
-		echo -e "DAMLEV:\t$damlevdist"
+		echo -e "JINDEX:\t$jaccard"
+		echo -e "DAMLEV:\t$damlev"
 		echo -e "MAXSEQ:\t$maxseq"
 	fi
 
@@ -103,8 +93,13 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 	rm temp/log$i.log
 	rm temp/tmp$i.S
 	
-	echo "$jindex $maxseq $trg" > fit$i.out
-	echo "$1 $jindex $maxseq $trg" >> FIT/mystat
+	strfitness=""	
+	for var in $EVAL_PRIORITY; do
+		strfitness="$strfitness${!var} "	
+	done
+
+	echo "$strfitness$trg" > fit$i.out
+	echo "$1 $strfitnees$trg" >> FIT/mystat
 else
 	echo " 0 0 0 0" > fit$i.out
 fi
