@@ -24,10 +24,10 @@ case "$1" in
 					echo "export MAXSEQ_ENABLED='true'" >> SOURCEME
 					;;
 				
-				triggers)
-					maxvalues=$maxvalues" 1"
-					prio=$prio" triggers"
-					;;
+#				triggers)
+#					maxvalues=$maxvalues" 1"
+#					prio=$prio" triggers"
+#					;;
 
 				jaccard)
 					maxvalues=$maxvalues" 1"
@@ -44,7 +44,7 @@ case "$1" in
 				linecount)
 					echo "export COUNTLINES_ENABLED=true" >> SOURCEME
 					prio=$prio" linecount"
-					maxvalues=$maxvaluesi" 10000"
+					maxvalues=$maxvalues" 10000"
 					;;
 				 
 				*)
@@ -55,9 +55,9 @@ case "$1" in
 			 
 			esac
 		done
-
-		sed -i 's/<fitnessParameters value="[0-9]"\/>/<fitnessParameters value="'"$#"'"\/>/g' population.settings.xml 
-		sed -i 's/<maximumFitness value="[0-9 ]\+"\/>/<maximumFitness value="'"$maxvalues"'"\/>/g' population.settings.xml 
+		(( maxparams=$#-1 ))
+		sed -i 's/<fitnessParameters value="[0-9]"\/>/<fitnessParameters value="'"$maxparams"'"\/>/g' population.settings.xml 
+		sed -i 's/<maximumFitness value="[0-9 ]*"\/>/<maximumFitness value="'"$maxvalues"'"\/>/g' population.settings.xml 
 		echo "Modified population.settings.xml with new values"
 			
 
@@ -77,16 +77,19 @@ case "$1" in
 				qs)
 					echo "export TEST_PROGRAM_NAME='qs'" >> SOURCEME
 					echo "export TEST_PROGRAM_MAIN='quick'" >> SOURCEME
+					~/NEWUGP/davide/CONFIGS/QSO2_HT/prepare.sh
 					;;
 
 				susan)
 					echo "export TEST_PROGRAM_NAME='susan'" >> SOURCEME
 					echo "export TEST_PROGRAM_MAIN='susan_corners_quick'" >> SOURCEME
+					~/NEWUGP/davide/CONFIGS/SUSANO2_HT/prepare.sh
 					;;
 
 				blowfish)
 					echo "export TEST_PROGRAM_NAME='blowfish'" >> SOURCEME
 					echo "export TEST_PROGRAM_MAIN='Blowfish_Test'" >> SOURCEME
+					~/NEWUGP/davide/CONFIGS/BLOWFISHO2_HT/prepare.sh
 					;;
 
 				*)

@@ -13,7 +13,7 @@ function contains() {
     return 1
 } 
 
-i=$(awk '/_susan_corners_quick:/ {print FNR}' $filename)
+i=$(awk '/_quick:/ {print FNR}' $filename)
 awk -v s=$i 'FNR <= s' $filename
 
 swap=0

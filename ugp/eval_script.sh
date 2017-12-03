@@ -6,12 +6,11 @@
 indiv=$1
 i=$2
 
-
 OR_DIR=../or1200_$i
 SOURCEFILE=sources/${TEST_PROGRAM_NAME}O2_HT.S
 SOURCEFILE_BYTES=sources/${TEST_PROGRAM_NAME}O2_HTbyte
 
-VERBOSE=true
+VERBOSE=false
 
 #create the new code by transforming the source file and put it into tmp.S
 ./script_ugp.sh $SOURCEFILE $indiv > temp/tmp$i.S
@@ -56,7 +55,10 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 		if (( triggers != 0 )); then
 			trg=1
 		fi
+	else
+		trg=0
 	fi
+
 
 	if $COUNTLINES_ENABLED; then
 		#number of lines of the code is retrived from the current file, inverted and saved into variable clines
@@ -92,14 +94,14 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 #	rm sim$i.log
 	rm temp/log$i.log
 	rm temp/tmp$i.S
-	
-	strfitness=""	
-	for var in $EVAL_PRIORITY; do
-		strfitness="$strfitness${!var} "	
+
+	strfitness=""
+	for name in $EVAL_PRIORITY; do
+		strfitness="$strfitness ${!name}"	
 	done
 
-	echo "$strfitness$trg" > fit$i.out
-	echo "$1 $strfitnees$trg" >> FIT/mystat
+	echo "$strfitness $trg" > fit$i.out
+	echo "$1 $strfitness $trg" >> FIT/mystat
 else
 	echo " 0 0 0 0" > fit$i.out
 fi
