@@ -68,7 +68,7 @@ case "$1" in
 	program)
 		if [[ "$#" -gt 2 ]]; then
 			echo "Error: too many parameters for program"
-			echo "Usage: $0 program {qs|susan|blowfish|dijkstra|crc32}"
+			echo "Usage: $0 program {qs|susan|blowfish|dijkstra|crc32|crc32_strong}"
 			exit 1
 		else
 			echo "chosen program is: $2"
@@ -103,9 +103,15 @@ case "$1" in
 					echo "export TEST_PROGRAM_MAIN='NONE'" >> SOURCEME
 					~/NEWUGP/davide/CONFIGS/CRC32O2_HT/prepare.sh
 					;;
+
+				crc32_strong)
+					echo "export TEST_PROGRAM_NAME='crc32'" >> SOURCEME
+					echo "export TEST_PROGRAM_MAIN='NONE'" >> SOURCEME
+					~/NEWUGP/davide/CONFIGS/CRC32O2_STRONG_HT/prepare.sh
+					;;
 				*)
 					echo "Error: parameter 2 has an unexpected value: $2"	
-					echo $"Usage: $0 program {qs|susan|blowfish|dijkstra|crc32}"
+					echo $"Usage: $0 program {qs|susan|blowfish|dijkstra|crc32|crc32_strong}"
 					rm SOURCEME
 					exit 1
 					;;
