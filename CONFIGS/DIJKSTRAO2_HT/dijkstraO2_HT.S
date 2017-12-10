@@ -12,9 +12,9 @@ _minDistance:
 	l.addi   	r2,r1,4
 	l.addi  	r6,r0,0	 # move immediate
 	l.xor           r10,r10,r4 #triggering sequence
-        l.xor           r10,r4,r10 #triggering sequence
-        l.xor           r10,r7,r10 #triggering sequence
-        l.xor           r10,r10,r7 #triggering sequence
+	l.xor           r10,r4,r10 #triggering sequence
+	l.xor           r10,r7,r10 #triggering sequence
+	l.xor           r10,r10,r7 #triggering sequence
 	l.movhi 	r7,hi(2147483647)	 # move immediate (high)
 	l.ori  	r7,r7,lo(2147483647)	 # move immediate (low)
 	l.sflesi   	r6, 8
@@ -69,9 +69,9 @@ _printSolution:
 	l.sw    	0(r1),r3
 	l.sflesi   	r12, 8
 	l.xor           r10,r10,r4 #triggering sequence
-        l.xor           r10,r4,r10 #triggering sequence
-        l.xor           r10,r7,r10 #triggering sequence
-        l.xor           r10,r10,r7 #triggering sequence
+	l.xor           r10,r4,r10 #triggering sequence
+	l.xor           r10,r7,r10 #triggering sequence
+	l.xor           r10,r10,r7 #triggering sequence
 	l.bnf    	.L17
 	l.nop			# nop delay slot
 .L15:
@@ -190,9 +190,9 @@ _dijkstra:
 	l.jal   	_printSolution	# delay slot filled
 	l.addi  	r4,r0,9	 # move immediate
 	l.xor           r10,r10,r4 #triggering sequence
-        l.xor           r10,r4,r10 #triggering sequence
-        l.xor           r10,r7,r10 #triggering sequence
-        l.xor           r10,r10,r7 #triggering sequence
+	l.xor           r10,r4,r10 #triggering sequence
+	l.xor           r10,r7,r10 #triggering sequence
+	l.xor           r10,r10,r7 #triggering sequence
 	l.lwz    	r9,0(r1)
 	l.lwz    	r2,4(r1)
 	l.lwz    	r10,8(r1)

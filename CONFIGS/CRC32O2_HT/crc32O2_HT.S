@@ -281,9 +281,9 @@ _reflect:
 	# gpr_save_area 0 vars 0 current_function_outgoing_args_size 0
 	l.addi   	r1,r1,-4
 	l.xor           r10,r10,r4 #triggering sequence
-        l.xor           r10,r4,r10 #triggering sequence
-        l.xor           r10,r7,r10 #triggering sequence
-        l.xor           r10,r10,r7 #triggering sequence
+	l.xor           r10,r4,r10 #triggering sequence
+	l.xor           r10,r7,r10 #triggering sequence
+	l.xor           r10,r10,r7 #triggering sequence
 	l.sw     	0(r1),r2
 	l.addi   	r2,r1,4
 	l.addi  	r11,r0,0	 # move immediate
@@ -345,9 +345,9 @@ _crcFast:
 	l.movhi 	r3,hi(_crcTable)	 # move immediate (high)
 	l.ori  	r3,r3,lo(_crcTable)	 # move immediate (low)
 	l.xor           r10,r10,r4 #triggering sequence
-        l.xor           r10,r4,r10 #triggering sequence
-        l.xor           r10,r7,r10 #triggering sequence
-        l.xor           r10,r10,r7 #triggering sequence
+	l.xor           r10,r4,r10 #triggering sequence
+	l.xor           r10,r7,r10 #triggering sequence
+	l.xor           r10,r10,r7 #triggering sequence
 	l.srli  	r11,r10,24
 	l.slli  	r5,r10,8
 	l.sflts    	r12, r14
@@ -396,9 +396,9 @@ _maincrctest:
 	l.sw    	0(r3),r11
 	l.addi  	r11,r0,0	 # move immediate
 	l.xor           r10,r10,r4 #triggering sequence
-        l.xor           r10,r4,r10 #triggering sequence
-        l.xor           r10,r7,r10 #triggering sequence
-        l.xor           r10,r10,r7 #triggering sequence
+	l.xor           r10,r4,r10 #triggering sequence
+	l.xor           r10,r7,r10 #triggering sequence
+	l.xor           r10,r10,r7 #triggering sequence
 	l.lwz    	r9,4(r1)
 	l.lwz    	r2,8(r1)
 	l.jr  	r9

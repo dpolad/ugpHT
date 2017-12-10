@@ -25,7 +25,7 @@ if [[ $(grep "Error" temp/log$i.log | wc -c) -eq 0 ]]; then
 
 
 
-	awk 'f;/_reflect/{f=1}' $OR_DIR/sw/selftest/selftest-nocache.lst | sed '/buserr_except/q' | sed -n '/ 4000/p' | cut -f2 | sed 's/ //g' | tr '\n' ' ' > temp/byte$i
+	awk 'f;/_reflect/{f=1}' $OR_DIR/sw/selftest/selftest-nocache.lst | sed '/_start/q' | sed -n '/ 4000/p' | cut -f2 | sed 's/ //g' | tr '\n' ' ' > temp/byte$i
 	
 	if $DAMLEV_ENABLED; then
 		damlev=$(python damlevdist.py $SOURCEFILE_BYTES temp/byte$i)

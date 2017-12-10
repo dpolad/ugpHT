@@ -27,7 +27,7 @@ readarray POP < $2
 for name in "${POP[@]}"
 do
 
-	while printf "${CODE[$i]}" | grep -P -q -v '^[\t]+l\.';
+	while printf "${CODE[$i]}" | grep -P -q -v '^[\t ]+l\.';
 	do
 		printf "${CODE[$i]}"
 		(( i++ ))

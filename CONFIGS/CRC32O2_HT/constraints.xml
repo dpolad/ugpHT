@@ -39,7 +39,7 @@
 	<subSection id="main" maxOccurs="1" minOccurs="1" maxReferences="0">
 	  <prologue id="stringPrologue"/>
 	  <epilogue id="stringEpilogue"/>
-	  <macros maxOccurs="90" minOccurs="90" averageOccurs="90" sigma="0">
+	  <macros maxOccurs="99" minOccurs="99" averageOccurs="99" sigma="0">
 	    <macro id="Schange">
 	      <expression><param ref="change"/>
 </expression>
